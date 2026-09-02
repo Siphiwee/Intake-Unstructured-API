@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from app.models import ReviewRequest, ReviewResponse 
+from app.service import process_review
 
 app = FastAPI(
     title="Structured Intake Review API",
@@ -11,3 +13,9 @@ def health_check():
     return {
         "status": "healthy"
     }
+
+@app.post("/review", response_model=ReviewResponse)
+def review_request(request: ReviewRequest):
+    return process_review(request)
+
+ 
