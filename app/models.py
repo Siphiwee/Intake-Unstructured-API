@@ -10,7 +10,7 @@ class ExtractedInformation(BaseModel):
     request_text: str | None = None
     employment_status: str | None = None
     months_unemployed: int | None = None
-    address: str | None = None
+    address: list[str] | None = None
     monthly_income: float | None = None
 
 

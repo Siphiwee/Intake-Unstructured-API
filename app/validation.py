@@ -17,6 +17,10 @@ def validate_information(data: ExtractedInformation) -> ValidationResult:
     if data.monthly_income is None:
         missing_information.append("monthly_income")
 
+    # Conflicting information
+    if data.address is not None and len(data.address) > 1:
+        conflicting_information.append("address")
+
     # Invalid information
     if data.monthly_income is not None and data.monthly_income < 0:
         invalid_information.append("monthly_income")
