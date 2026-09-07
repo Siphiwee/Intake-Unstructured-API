@@ -20,6 +20,7 @@ class ValidationResult(BaseModel):
     invalid_information: list[str]
     conflicting_information: list[str]
     review_required: bool
+    review_reasons: list[str]
 
 
 class ReviewResponse(BaseModel):

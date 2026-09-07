@@ -6,6 +6,7 @@ def validate_information(data: ExtractedInformation) -> ValidationResult:
     missing_information = []
     invalid_information = []
     conflicting_information = []
+    review_reasons = []
 
     # Required information
     if data.name is None:
@@ -28,6 +29,16 @@ def validate_information(data: ExtractedInformation) -> ValidationResult:
     if data.months_unemployed is not None and data.months_unemployed < 0:
         invalid_information.append("months_unemployed")
 
+    # Determine why human review may be required
+    if len(missing_information) > 0:
+        review_reasons.append("Required information is missing")
+
+    if len(invalid_information) > 0:
+        review_reasons.append("Invalid information was detected")
+
+    if len(conflicting_information) > 0:
+        review_reasons.append("Conflicting information was detected")
+
     # Determine whether human review is required
     review_required = (
         len(missing_information) > 0
@@ -45,5 +56,6 @@ def validate_information(data: ExtractedInformation) -> ValidationResult:
         missing_information=missing_information,
         invalid_information=invalid_information,
         conflicting_information=conflicting_information,
-        review_required=review_required
+        review_required=review_required,
+        review_reasons=review_reasons
     )
