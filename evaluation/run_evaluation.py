@@ -38,9 +38,28 @@ for case in cases:
 
     status_match = actual["status"] == expected["status"]
     review_match = actual["review_required"] == expected["review_required"]
-    missing_match = actual["missing_information"] == expected["missing_information"]
-    invalid_match = actual["invalid_information"] == expected["invalid_information"]
-    conflicting_match = actual["conflicting_information"] == expected["conflicting_information"]
+    missing_match = (
+        actual["missing_information"]
+        == expected["missing_information"]
+    )
+    invalid_match = (
+        actual["invalid_information"]
+        == expected["invalid_information"]
+    )
+    conflicting_match = (
+        actual["conflicting_information"]
+        == expected["conflicting_information"]
+    )
+
+    review_reasons_match = True
+
+    if "review_reasons" in expected:
+        actual_reasons = set(actual["review_reasons"])
+        expected_reasons = set(expected["review_reasons"])
+
+        review_reasons_match = (
+            actual_reasons == expected_reasons
+        )
 
     passed = (
         status_match
@@ -48,6 +67,7 @@ for case in cases:
         and missing_match
         and invalid_match
         and conflicting_match
+        and review_reasons_match
     )
 
     if passed:
