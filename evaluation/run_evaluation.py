@@ -9,10 +9,23 @@ with open("evaluation/cases.json", "r", encoding="utf-8") as file:
 print(f"Loaded {len(cases)} evaluation cases.")
 print()
 
+
 passed_count = 0
 failed_count = 0
 
+category_results = {}
+
+
 for case in cases:
+
+    category = case["category"]
+
+    if category not in category_results:
+        category_results[category] = {
+            "passed": 0,
+            "failed": 0
+        }
+
     response = requests.post(
         "http://127.0.0.1:8000/review",
         json={
@@ -39,9 +52,12 @@ for case in cases:
 
     if passed:
         passed_count += 1
+        category_results[category]["passed"] += 1
         print(f'{case["id"]}: PASS')
+
     else:
         failed_count += 1
+        category_results[category]["failed"] += 1
         print(f'{case["id"]}: FAIL')
         print("Expected:", expected)
         print("Actual:", actual)
@@ -50,8 +66,29 @@ for case in cases:
 total_cases = len(cases)
 accuracy = (passed_count / total_cases) * 100
 
+
 print()
 print(f"Passed: {passed_count}")
 print(f"Failed: {failed_count}")
 print(f"Total: {total_cases}")
 print(f"Evaluation accuracy: {accuracy:.1f}%")
+
+
+print()
+print("Category Results")
+print("----------------")
+
+
+for category, results in category_results.items():
+
+    category_total = results["passed"] + results["failed"]
+
+    category_accuracy = (
+        results["passed"] / category_total
+    ) * 100
+
+    print(
+        f"{category}: "
+        f"{results['passed']}/{category_total} passed "
+        f"({category_accuracy:.1f}%)"
+    )
