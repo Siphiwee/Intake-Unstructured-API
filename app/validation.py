@@ -29,7 +29,7 @@ def validate_information(data: ExtractedInformation) -> ValidationResult:
     if data.months_unemployed is not None and data.months_unemployed < 0:
         invalid_information.append("months_unemployed")
 
-            # Unsafe or adversarial input
+    # Unsafe or adversarial input
     unsafe_phrases = [
         "ignore all previous instructions",
         "ignore previous instructions",

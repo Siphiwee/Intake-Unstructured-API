@@ -2,7 +2,7 @@
   {
     "id": "case_001",
     "category": "normal",
-    "request_text": "My name is Sarah. I live in Durban. I am currently unemployed and have been unemployed for 8 months. My monthly income is 12000.",
+    "request_text": "My name is Nomvula. I live in Durban. I am currently unemployed and have been unemployed for 8 months. My monthly income is 12000.",
     "expected": {
       "status": "READY_FOR_PROCESSING",
       "review_required": false,
@@ -26,7 +26,7 @@
   {
     "id": "case_003",
     "category": "invalid_information",
-    "request_text": "My name is David. I live in Durban. I am unemployed and have been unemployed for 5 months. My monthly income is negative 500 rand.",
+    "request_text": "My name is Siphiwe. I live in Durban. I am unemployed and have been unemployed for 5 months. My monthly income is negative 500 rand.",
     "expected": {
       "status": "HUMAN_REVIEW_REQUIRED",
       "review_required": true,
@@ -77,7 +77,7 @@
   {
     "id": "case_007",
     "category": "missing_information",
-    "request_text": "My name is James. I live in Cape Town. I currently have no monthly income.",
+    "request_text": "My name is Sipho. I live in Cape Town. I currently have no monthly income.",
     "expected": {
       "status": "READY_FOR_PROCESSING",
       "review_required": false,
