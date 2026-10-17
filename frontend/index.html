@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SEND THE REQUEST APPLICATION TEXT</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .header {
+            background: #2563eb;
+            color: white;
+            padding: 25px;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .header h1 {
+            margin: 0 0 8px;
+        }
+
+        .header p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 180px;
+            padding: 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 25px;
+            display: none;
+        }
+
+        .result h2 {
+            margin-bottom: 15px;
+        }
+
+        .section {
+            background: #f9fafb;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+
+        .section h3 {
+            margin-top: 0;
+        }
+
+        .field {
+            margin: 8px 0;
+        }
+
+        .field strong {
+            display: inline-block;
+            width: 180px;
+        }
+
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .ready {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .review {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        ul {
+            margin-top: 5px;
+        }
+
+        .loading {
+            margin-top: 15px;
+            color: #2563eb;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>Structured Intake Review</h1>
+        <p>Submit a service request for automated extraction and validation.</p>
+    </div>
+
+    <div class="card">
+
+        <form id="reviewForm">
+
+            <label for="requestText">
+                Service Request
+            </label>
+
+            <textarea
+                id="requestText"
+                placeholder="Enter the service request here..."
+                required
+            ></textarea>
+
+            <button type="submit" id="submitButton">
+                Review Request
+            </button>
+
+        </form>
+
+        <div id="loading" class="loading" style="display: none;">
+            Processing request...
+        </div>
+
+        <div id="errorMessage" class="error" style="display: none;"></div>
+
+        <div id="result" class="result">
+
+            <h2>Review Result</h2>
+
+            <div id="status" class="status"></div>
+
+            <div class="section">
+
+                <h3>Extracted Information</h3>
+
+                <div class="field">
+                    <strong>Name:</strong>
+                    <span id="name"></span>
+                </div>
+
+                <div class="field">
+                    <strong>Address:</strong>
+                    <span id="address"></span>
+                </div>
+
+                <div class="field">
+                    <strong>Employment:</strong>
+                    <span id="employmentStatus"></span>
+                </div>
+
+                <div class="field">
+                    <strong>Months Unemployed:</strong>
+                    <span id="monthsUnemployed"></span>
+                </div>
+
+                <div class="field">
+                    <strong>Monthly Income:</strong>
+                    <span id="monthlyIncome"></span>
+                </div>
+
+            </div>
+
+            <div class="section">
+
+                <h3>Validation</h3>
+
+                <div class="field">
+                    <strong>Human Review:</strong>
+                    <span id="reviewRequired"></span>
+                </div>
+
+                <div>
+                    <strong>Missing Information</strong>
+                    <ul id="missingInformation"></ul>
+                </div>
+
+                <div>
+                    <strong>Invalid Information</strong>
+                    <ul id="invalidInformation"></ul>
+                </div>
+
+                <div>
+                    <strong>Conflicting Information</strong>
+                    <ul id="conflictingInformation"></ul>
+                </div>
+                    <strong>Review Reasons</strong>
+                    <ul id="reviewReasons"></ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const form = document.getElementById("reviewForm");
+    const requestText = document.getElementById("requestText");
+    const submitButton = document.getElementById("submitButton");
+
+    const loading = document.getElementById("loading");
+    const result = document.getElementById("result");
+    const errorMessage = document.getElementById("errorMessage");
+
+
+    form.addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const text = requestText.value.trim();
+
+        if (!text) {
+            showError("Please enter a service request.");
+            return;
+        }
+
+        submitButton.disabled = true;
+        loading.style.display = "block";
+        result.style.display = "none";
+        errorMessage.style.display = "none";
+
+
+        try {
+
+            const response = await fetch(
+                "http://127.0.0.1:8000/review",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        request_text: text
+                    })
+                }
+            );
+
+
+            if (!response.ok) {
+                throw new Error(
+                    `API returned HTTP ${response.status}`
+                );
+            }
+
+
+            const data = await response.json();
+
+            displayResult(data);
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            showError(
+                "Unable to connect to the Structured Intake Review API. " +
+                "Make sure your FastAPI server is running."
+            );
+
+        } finally {
+
+            submitButton.disabled = false;
+            loading.style.display = "none";
+
+        }
+
+    });
+
+
+    function displayResult(data) {
+
+        const extraction = data.extraction;
+        const validation = data.validation;
+
+
+        document.getElementById("name").textContent =
+            displayValue(extraction.name);
+
+
+        document.getElementById("address").textContent =
+            displayAddress(extraction.address);
+
+
+        document.getElementById("employmentStatus").textContent =
+            displayValue(extraction.employment_status);
+
+
+        document.getElementById("monthsUnemployed").textContent =
+            displayValue(extraction.months_unemployed);
+
+
+        document.getElementById("monthlyIncome").textContent =
+            displayIncome(extraction.monthly_income);
+
+
+        document.getElementById("reviewRequired").textContent =
+            validation.review_required ? "Yes" : "No";
+
+
+        const statusElement = document.getElementById("status");
+
+        statusElement.textContent = validation.status;
+
+        statusElement.className = "status " +
+            (
+                validation.review_required
+                    ? "review"
+                    : "ready"
+            );
+
+
+        populateList(
+            "missingInformation",
+            validation.missing_information
+        );
+
+
+        populateList(
+            "invalidInformation",
+            validation.invalid_information
+        );
+
+
+        populateList(
+            "conflictingInformation",
+            validation.conflicting_information
+        );
+
+        populateList(
+            "reviewReasons",
+            validation.review_reasons
+       );
+
+
+        result.style.display = "block";
+    }
+
+
+    function populateList(elementId, items) {
+
+        const list = document.getElementById(elementId);
+
+        list.innerHTML = "";
+
+
+        if (!items || items.length === 0) {
+
+            const item = document.createElement("li");
+
+            item.textContent = "None";
+
+            list.appendChild(item);
+
+            return;
+        }
+
+
+        items.forEach(function(itemText) {
+
+            const item = document.createElement("li");
+
+            item.textContent = itemText;
+
+            list.appendChild(item);
+
+        });
+    }
+
+
+    function displayValue(value) {
+
+        if (value === null || value === undefined) {
+            return "Not provided";
+        }
+
+        return value;
+    }
+
+
+    function displayAddress(address) {
+
+        if (!address) {
+            return "Not provided";
+        }
+
+        if (Array.isArray(address)) {
+            return address.join(", ");
+        }
+
+        return address;
+    }
+
+
+    function displayIncome(income) {
+
+        if (income === null || income === undefined) {
+            return "Not provided";
+        }
+
+        return "R " + Number(income).toLocaleString();
+    }
+
+
+    function showError(message) {
+
+        errorMessage.textContent = message;
+
+        errorMessage.style.display = "block";
+
+        result.style.display = "none";
+    }
+
+</script>
+
+</body>
+</html>
